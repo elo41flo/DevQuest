@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Inscription</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    form {
+      background: #1e293b;
+      padding: 2rem;
+      border-radius: 1rem;
+      width: 300px;
+    }
+    input, button {
+      width: 100%;
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      border: none;
+    }
+    button {
+      background-color: #10b981;
+      color: white;
+      cursor: pointer;
+    }
+    a {
+      color: #6ee7b7;
+      text-decoration: none;
+      margin-top: 1rem;
+      display: block;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Inscription</h1>
+  <form id="signup-form">
+    <input type="text" id="signup-username" placeholder="Nom d'utilisateur" required>
+    <input type="email" id="signup-email" placeholder="Email" required>
+    <input type="password" id="signup-password" placeholder="Mot de passe" required>
+    <button type="submit">S'inscrire</button>
+    <a href="connexion.html">Déjà inscrit ? Connecte-toi</a>
+  </form>
+
+  <script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+    import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+  
+    const form = document.getElementById("signup-form");
+  
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+  
+      const username = document.getElementById("signup-username").value;
+      const email = document.getElementById("signup-email").value;
+      const password = document.getElementById("signup-password").value;
+  
+      try {
+        // 1. Création de l'utilisateur
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+  
+        // 2. Mise à jour du displayName dans Firebase Auth
+        await updateProfile(user, {
+          displayName: username
+        });
+  
+        // 3. Sauvegarde dans Firestore
+        await setDoc(doc(db, "users", user.uid), {
+          username: username,
+          email: email,
+          createdAt: serverTimestamp()
+        });
+  
+        alert("Compte créé avec succès !");
+        window.location.href = "connexion.html";
+  
+      } catch (error) {
+        alert("Erreur : " + error.message);
+      }
+    });
+  </script>
+  
+</body>
+</html>

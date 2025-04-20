@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Choisir ton Avatar - DevQuest</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    #avatar-selection {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      justify-items: center;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    .avatar-option {
+      width: 100%;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .avatar-option:hover {
+      transform: scale(1.05);
+    }
+
+    .avatar-option img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .avatar-option.selected {
+      border: 4px solid #10b981;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 1rem;
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Choisis ton Avatar</h2>
+
+  <div id="avatar-selection">
+    <!-- Les avatars seront ajoutés ici dynamiquement -->
+    <div class="avatar-option" data-avatar="bouclé court.svg">
+      <img src="img/bouclé court.svg" alt="Avatar 1">
+    </div>
+    <div class="avatar-option" data-avatar="chignon.svg">
+      <img src="img/chignon.svg" alt="Avatar 2">
+    </div>
+    <div class="avatar-option" data-avatar="hihjab.svg">
+      <img src="img/hihjab.svg" alt="Avatar 3">
+    </div>
+    <div class="avatar-option" data-avatar="homme classique.svg">
+      <img src="img/homme classique.svg" alt="Avatar 4">
+    </div>
+    <div class="avatar-option" data-avatar="homme court.svg">
+        <img src="img/homme court.svg" alt="Avatar 5">
+    </div>
+    <div class="avatar-option" data-avatar="long.svg">
+        <img src="img/long.svg" alt="Avatar 6">
+    </div>
+    <div class="avatar-option" data-avatar="mulet.svg">
+        <img src="img/mulet.svg" alt="Avatar 7">
+    </div>
+    <div class="avatar-option" data-avatar="turban.svg">
+        <img src="img/turban.svg" alt="Avatar 8">
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 DevQuest | Tous droits réservés</p>
+  </footer>
+
+  <script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js';
+    import { doc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js';
+
+    // Sélectionner toutes les options d'avatar
+    const avatarOptions = document.querySelectorAll('.avatar-option');
+
+    // Vérifier si l'utilisateur est connecté
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Gérer la sélection de l'avatar
+        avatarOptions.forEach((avatar) => {
+          avatar.addEventListener('click', async () => {
+            // Enlever la classe 'selected' de tous les avatars
+            avatarOptions.forEach(opt => opt.classList.remove('selected'));
+            // Ajouter la classe 'selected' à l'avatar sélectionné
+            avatar.classList.add('selected');
+
+            const selectedAvatar = avatar.dataset.avatar;
+
+            // Enregistrer le choix de l'avatar dans Firestore
+            await updateDoc(doc(db, "users", user.uid), {
+              avatar: selectedAvatar
+            });
+
+            alert("Avatar enregistré !");
+            // Redirection vers la page du tableau de bord
+            window.location.href = "dashboard.html";
+          });
+        });
+      } else {
+        // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+        window.location.href = "connexion.html";
+      }
+    });
+  </script>
+
+</body>
+</html>

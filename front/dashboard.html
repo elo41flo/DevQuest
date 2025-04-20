@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - DevQuest</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('dashboard-bg.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      backdrop-filter: blur(4px);
+    }
+
+    header {
+      background-color: rgba(15, 23, 42, 0.85);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      color: #facc15;
+    }
+
+    .user-info {
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .user-info img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .user-info a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .user-info a:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .card {
+      background: rgba(30, 41, 59, 0.9);
+      padding: 1.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: scale(1.02);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      color: #10b981;
+    }
+
+    .card ul {
+      padding-left: 1rem;
+      list-style: none;
+    }
+
+    .card ul li::before {
+      content: "⚔️ ";
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background-color: #3b82f6;
+      border-radius: 0.5rem;
+      color: white;
+      text-decoration: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: rgba(15, 23, 42, 0.85);
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Tableau de Bord</h1>
+    <div class="user-info">
+        <img id="user-avatar" src="" alt="Avatar" style="cursor: pointer;" />
+      <span id="user-name">Aventurier</span>
+      | <a href="deconnexion.html" style="color: #f87171;"> Se  déconnecter</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="card">
+      <h2>📜 Quêtes</h2>
+      <ul>
+        <li>HTML: Créer ta première page</li>
+        <li>CSS: Styliser comme un pro</li>
+        <li>JavaScript: Manipule le DOM</li>
+        <li>Firebase: Authentification</li>
+      </ul>
+      <a href="#" class="btn">Voir toutes les quêtes</a>
+    </div>
+
+    <div class="card">
+      <h2>📈 Progression</h2>
+      <p>Niveaux terminés: <strong>2/10</strong></p>
+      <p>Temps total: <strong>1h45</strong></p>
+      <p>Prochain objectif: <em>Créer un composant dynamique</em></p>
+      <a href="#" class="btn">Voir mon parcours</a>
+    </div>
+
+    <div class="card">
+      <h2>🏆 Succès</h2>
+      <ul>
+        <li>🧠 Maître du HTML</li>
+        <li>🎯 Premier Script JS</li>
+        <li>🔓 Authentifié avec Firebase</li>
+      </ul>
+      <a href="#" class="btn">Voir mes succès</a>
+    </div>
+  </main>
+
+  <footer>
+    © 2025 DevQuest - Continue ta quête, héros du code !
+  </footer>
+
+  <script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js';
+    import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js';
+  
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userName = user.displayName || "Aventurier";
+        document.getElementById('user-name').innerText = userName;
+  
+        // Charger l'avatar depuis Firestore
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            const data = userDoc.data();
+            // Vérifier si un avatar est défini
+            if (data.avatar) {
+              console.log("Avatar récupéré depuis Firestore :", data.avatar);  // Log pour vérifier l'avatar récupéré
+              // Mettre à jour la source de l'image
+              // Le chemin de l'image est 'img/' + le nom de l'avatar récupéré depuis Firestore
+              document.getElementById('user-avatar').src = `img/${data.avatar}`;
+            } else {
+              console.log("Aucun avatar trouvé dans Firestore pour cet utilisateur.");
+            }
+          } else {
+            console.log("Aucun document trouvé pour l'utilisateur.");
+          }
+        } catch (error) {
+          console.error("Erreur lors de la récupération de l'avatar :", error);
+        }
+      } else {
+        window.location.href = 'connexion.html';
+      }
+    });
+
+    document.getElementById('user-avatar').addEventListener('click', () => {
+        window.location.href = 'avatar.html';
+      });
+      
+  </script>
+  
+</body>
+</html>

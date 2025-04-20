@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevQuest - Camp de Base</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('background-quest.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .overlay {
+      background-color: rgba(15, 23, 42, 0.8);
+      padding: 3rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+      max-width: 600px;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: #10b981;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    #user-name {
+      color: #facc15;
+      font-weight: bold;
+    }
+
+    .btn {
+      display: inline-block;
+      margin: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background-color: #3b82f6;
+      color: #fff;
+      border-radius: 0.5rem;
+      font-size: 1.1rem;
+      text-decoration: none;
+      transition: transform 0.2s ease, background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #2563eb;
+      transform: scale(1.05);
+    }
+
+    footer {
+      position: absolute;
+      bottom: 1rem;
+      font-size: 0.9rem;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="overlay">
+    <h1>Bienvenue, <span id="user-name">Aventurier</span> !</h1>
+    <p>Tu viens d’entrer dans le **Camp de Base** de <strong>DevQuest</strong>.<br>
+    Ta mission : <em>Terminer tous les niveaux, prouver tes compétences de dev, et débloquer les succès légendaires.</em></p>
+
+    <a href="dashboard.html" class="btn">📜 Voir les Quêtes</a>
+    <a href="profil.html" class="btn">🧙‍♂️ Mon Profil</a>
+    <a href="deconnexion.html" class="btn">🚪 Se Déconnecter</a>
+  </div>
+
+  <footer>© 2025 DevQuest - Forge ton destin, un niveau à la fois.</footer>
+
+  <script type="module">
+    import { auth } from './firebase-config.js';
+    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js';
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const userName = user.displayName || "Aventurier";
+        document.getElementById('user-name').innerText = userName;
+      } else {
+        window.location.href = 'connexion.html';
+      }
+    });
+  </script>
+
+</body>
+</html>
