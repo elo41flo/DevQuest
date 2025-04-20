@@ -14,6 +14,7 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
+      padding: 20px;
     }
 
     h1 {
@@ -25,7 +26,6 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
-      padding: 20px;
       width: 80%;
     }
 
@@ -35,6 +35,7 @@
       border-radius: 1rem;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
       transition: transform 0.2s;
+      cursor: pointer;
     }
 
     .card:hover {
@@ -60,6 +61,16 @@
       margin-top: 1rem;
     }
 
+    .quest-details {
+      background: rgba(30, 41, 59, 0.9);
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      width: 80%;
+      margin-top: 40px;
+      display: none;
+    }
+
     footer {
       text-align: center;
       margin-top: 40px;
@@ -73,6 +84,12 @@
 
   <div class="quests-container">
     <!-- Défis vont être insérés ici dynamiquement -->
+  </div>
+
+  <div id="quest-details" class="quest-details">
+    <h2 id="quest-title"></h2>
+    <p id="quest-description"></p>
+    <button id="complete-btn" class="btn">Compléter le défi</button>
   </div>
 
   <footer>
@@ -118,28 +135,38 @@
     ];
 
     const questsContainer = document.querySelector('.quests-container');
+    const questDetails = document.getElementById('quest-details');
+    const questTitle = document.getElementById('quest-title');
+    const questDescription = document.getElementById('quest-description');
+    const completeBtn = document.getElementById('complete-btn');
 
     // Ajouter chaque défi dans une carte
-    quests.forEach(quest => {
+    quests.forEach((quest, index) => {
       const card = document.createElement('div');
       card.classList.add('card');
-
-      const title = document.createElement('h2');
-      title.textContent = `📜 ${quest.name}`;
-      
-      const description = document.createElement('p');
-      description.textContent = quest.description;
-
-      const button = document.createElement('a');
-      button.href = '#';
-      button.classList.add('btn');
-      button.textContent = 'Commencer le défi';
-
-      card.appendChild(title);
-      card.appendChild(description);
-      card.appendChild(button);
+      card.innerHTML = `
+        <h2>📜 ${quest.name}</h2>
+        <p>${quest.description}</p>
+        <a href="#" class="btn" onclick="showQuestDetails(${index})">Commencer le défi</a>
+      `;
       questsContainer.appendChild(card);
     });
+
+    function showQuestDetails(index) {
+      const quest = quests[index];
+      // Mettre à jour les détails du défi
+      questTitle.textContent = quest.name;
+      questDescription.textContent = quest.description;
+      // Afficher la section de détails
+      questDetails.style.display = 'block';
+
+      // Ajouter un événement de clic pour marquer le défi comme complété
+      completeBtn.onclick = () => {
+        alert(`${quest.name} a été complété !`);
+        // Masquer la section de détails après avoir complété
+        questDetails.style.display = 'none';
+      };
+    }
   </script>
 
 </body>
