@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Défis - DevQuest</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    h1 {
+      color: #facc15;
+      margin-bottom: 20px;
+    }
+
+    .quests-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      width: 80%;
+    }
+
+    .card {
+      background: rgba(30, 41, 59, 0.9);
+      padding: 1.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    .card h2 {
+      color: #10b981;
+      margin-bottom: 1rem;
+    }
+
+    .card p {
+      margin-bottom: 1rem;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background-color: #3b82f6;
+      border-radius: 0.5rem;
+      color: white;
+      text-decoration: none;
+      margin-top: 1rem;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Défis - DevQuest</h1>
+
+  <div class="quests-container">
+    <!-- Défis vont être insérés ici dynamiquement -->
+  </div>
+
+  <footer>
+    © 2025 DevQuest - Rejoignez la quête !
+  </footer>
+
+  <script>
+    const quests = [
+      { name: "Créer ta première page HTML", description: "Apprends à créer ta première page web en HTML." },
+      { name: "Styliser une page avec CSS", description: "Utilise les propriétés CSS pour styliser ta page HTML." },
+      { name: "Créer une barre de navigation", description: "Apprends à créer une barre de navigation responsive." },
+      { name: "Manipuler le DOM avec JavaScript", description: "Apprends à manipuler les éléments d'une page web avec JavaScript." },
+      { name: "Ajouter une image à une page HTML", description: "Ajoute une image à ta page web à l'aide de la balise <img>." },
+      { name: "Créer un formulaire HTML", description: "Crée un formulaire HTML pour recueillir des informations des utilisateurs." },
+      { name: "Valider un formulaire avec JavaScript", description: "Ajoute une validation de formulaire pour vérifier que les champs sont remplis correctement." },
+      { name: "Comprendre les Flexbox en CSS", description: "Utilise Flexbox pour aligner les éléments dans un conteneur." },
+      { name: "Faire une animation CSS simple", description: "Crée une animation simple en utilisant CSS." },
+      { name: "Utiliser les Media Queries", description: "Rends ta page responsive en utilisant les Media Queries en CSS." },
+      { name: "Comprendre les Variables en JavaScript", description: "Apprends à utiliser les variables en JavaScript." },
+      { name: "Créer une page de connexion avec Firebase", description: "Crée une page de connexion en utilisant Firebase Authentication." },
+      { name: "Gérer l'état avec LocalStorage", description: "Utilise LocalStorage pour sauvegarder des données localement sur l'utilisateur." },
+      { name: "Créer une galerie d'images", description: "Crée une galerie d'images en HTML et CSS avec un effet hover." },
+      { name: "Ajouter des liens internes et externes", description: "Crée des liens internes (vers d'autres pages de ton site) et externes (vers d'autres sites)." },
+      { name: "Utiliser les événements en JavaScript", description: "Apprends à gérer des événements comme le clic et le survol en JavaScript." },
+      { name: "Afficher des données dynamiques avec JavaScript", description: "Utilise JavaScript pour afficher des données dynamiquement sur ta page." },
+      { name: "Créer un carousel d'images en JavaScript", description: "Crée un carousel d'images interactif en utilisant JavaScript." },
+      { name: "Ajouter des icônes avec FontAwesome", description: "Utilise les icônes FontAwesome pour ajouter des icônes à ta page." },
+      { name: "Mettre en place un système de login avec Firebase", description: "Crée un système de login utilisant Firebase Authentication." },
+      { name: "Faire un menu déroulant en CSS", description: "Crée un menu déroulant en utilisant uniquement CSS." },
+      { name: "Créer une page de contact", description: "Crée une page de contact avec un formulaire de contact." },
+      { name: "Ajouter un footer à ton site", description: "Ajoute un footer avec des informations de copyright et des liens vers les réseaux sociaux." },
+      { name: "Travailler avec les dates en JavaScript", description: "Apprends à manipuler les dates avec l'objet Date en JavaScript." },
+      { name: "Faire une page de portfolio", description: "Crée une page de portfolio pour présenter tes projets." },
+      { name: "Créer une carte interactive avec Leaflet", description: "Crée une carte interactive en utilisant la bibliothèque Leaflet." },
+      { name: "Ajouter des effets de transition CSS", description: "Apprends à utiliser les transitions CSS pour créer des effets visuels intéressants." },
+      { name: "Créer un blog avec JavaScript", description: "Crée une application de blog simple en utilisant JavaScript." },
+      { name: "Ajouter des outils de développement à ton site", description: "Ajoute des outils comme un dark mode ou un compteur de visites à ton site." },
+      { name: "Déployer ton site avec Firebase Hosting", description: "Apprends à déployer ton site web sur Firebase Hosting." },
+      { name: "Créer une page d'erreur 404", description: "Crée une page d'erreur 404 personnalisée pour ton site." },
+      { name: "Faire une animation de défilement avec CSS", description: "Crée une animation de défilement fluide en utilisant CSS." },
+      { name: "Utiliser les Promesses en JavaScript", description: "Apprends à utiliser les promesses pour gérer les opérations asynchrones." },
+      { name: "Mettre en place un chatbot avec JavaScript", description: "Crée un chatbot simple en JavaScript pour discuter avec l'utilisateur." }
+    ];
+
+    const questsContainer = document.querySelector('.quests-container');
+
+    // Ajouter chaque défi dans une carte
+    quests.forEach(quest => {
+      const card = document.createElement('div');
+      card.classList.add('card');
+
+      const title = document.createElement('h2');
+      title.textContent = `📜 ${quest.name}`;
+      
+      const description = document.createElement('p');
+      description.textContent = quest.description;
+
+      const button = document.createElement('a');
+      button.href = '#';
+      button.classList.add('btn');
+      button.textContent = 'Commencer le défi';
+
+      card.appendChild(title);
+      card.appendChild(description);
+      card.appendChild(button);
+      questsContainer.appendChild(card);
+    });
+  </script>
+
+</body>
+</html>
