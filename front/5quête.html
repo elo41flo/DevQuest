@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quête 5 : Ajouter une image</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      color: #facc15;
+    }
+
+    .editor-container {
+      width: 80%;
+      margin-top: 30px;
+    }
+
+    #editor {
+      height: 300px;
+      width: 100%;
+      background-color: #1e293b;
+      color: white;
+      font-size: 14px;
+    }
+
+    .output-container {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #1e293b;
+      border-radius: 8px;
+      width: 100%;
+    }
+
+    iframe {
+      width: 100%;
+      height: 400px;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      border-radius: 6px;
+      background-color: #0ea5e9;
+      border: none;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .xp-container {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #38bdf8;
+    }
+
+    #xp-popup {
+      display: none;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #16a34a;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 6px;
+      font-weight: bold;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Quête 5 : Ajouter une image 🖼️</h1>
+  <p>Utilise la balise <code>&lt;img&gt;</code> pour afficher une image sur ta page !</p>
+
+  <div class="editor-container">
+    <div id="editor">
+&lt;h1&gt;Mon image préférée&lt;/h1&gt;
+&lt;img src="https://placekitten.com/400/300" alt="Un chaton trop mignon"&gt;
+&lt;p&gt;Voici une image ajoutée dans ma page HTML !&lt;/p&gt;
+
+&lt;style&gt;
+  img {
+    display: block;
+    margin: 0 auto;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 400px;
+  }
+&lt;/style&gt;
+    </div>
+    <button onclick="runCode()">Exécuter le Code</button>
+  </div>
+  <div class="xp-container">
+    XP Gagnée : <span id="xp">0</span>
+  </div>
+
+  <div id="xp-popup">+20 XP !</div>
+
+  <div class="output-container">
+    <h3>Voici le rendu :</h3>
+    <iframe id="output"></iframe>
+  </div>
+
+  <footer>
+    © 2025 DevQuest - Continue ta quête de code !
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+  <script>
+    const editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.getSession().setMode("ace/mode/html");
+
+    let currentXP = 0;
+    let lastXP = 0;
+
+    function addXP(amount) {
+      currentXP += amount;
+      document.getElementById("xp").textContent = currentXP;
+      showXPPopup(amount);
+      lastXP = currentXP;
+    }
+
+    function showXPPopup(amount) {
+      const popup = document.getElementById("xp-popup");
+      popup.textContent = `+${amount} XP !`;
+      popup.style.display = "block";
+      setTimeout(() => popup.style.display = "none", 2000);
+    }
+
+    function runCode() {
+      const outputFrame = document.getElementById("output");
+      const outputDoc = outputFrame.contentDocument || outputFrame.contentWindow.document;
+      const code = editor.getValue();
+
+      outputDoc.open();
+      outputDoc.write(code);
+      outputDoc.close();
+
+      if (code.includes("<img") && currentXP === lastXP) {
+        addXP(20);
+      }
+    }
+  </script>
+</body>
+</html>

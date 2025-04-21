@@ -81,6 +81,108 @@
       z-index: 1000;
     }
   </style>
+  <!-- ...tout le HTML jusqu'au <script> Ace -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+  import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDerhdfCEZPaOjoaJU-8JrNyde9_8r4nQk",
+    authDomain: "devquest-65bbc.firebaseapp.com",
+    projectId: "devquest-65bbc",
+    storageBucket: "devquest-65bbc.firebasestorage.app",
+    messagingSenderId: "189356704806",
+    appId: "1:189356704806:web:de3cbf0b89ac45ab0e92e7",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth();
+
+  let currentUserUID = null;
+  let currentXP = 0;
+  let lastXP = 0;
+
+  // Initialisation de l'éditeur Ace
+  const editor = ace.edit("editor");
+  editor.setTheme("ace/theme/monokai");
+  editor.getSession().setMode("ace/mode/html");
+  const defaultHTML = `<h1>Hello World!</h1>\n<p>Félicitations, tu as créé ta première page HTML !</p>`;
+  editor.setValue(defaultHTML);
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUserUID = user.uid;
+      const userRef = doc(db, "users", currentUserUID);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        currentXP = userSnap.data().xp || 0;
+        lastXP = currentXP;
+        document.getElementById("xp").textContent = currentXP;
+      }
+    } else {
+      console.warn("Utilisateur non connecté");
+    }
+  });
+
+  async function addXP(amount) {
+    currentXP += amount;
+    document.getElementById('xp').textContent = currentXP;
+    showXPPopup(amount);
+
+    if (currentUserUID) {
+      const userRef = doc(db, "users", currentUserUID);
+      try {
+        await updateDoc(userRef, { xp: currentXP });
+        lastXP = currentXP;
+      } catch (e) {
+        console.error("Erreur mise à jour XP:", e);
+      }
+    }
+  }
+
+  function showXPPopup(amount) {
+    const popup = document.getElementById('xp-popup');
+    popup.textContent = `+${amount} XP !`;
+    popup.style.display = 'block';
+    setTimeout(() => popup.style.display = 'none', 2000);
+  }
+
+  window.runCode = function () {
+    const outputFrame = document.getElementById('output');
+    const outputDoc = outputFrame.contentDocument || outputFrame.contentWindow.document;
+
+    outputDoc.open();
+    outputDoc.write(`
+      <!DOCTYPE html>
+      <html lang="fr">
+      <head>
+        <meta charset="UTF-8">
+        <title>Hello World</title>
+        <style>
+          body { background-color: #f0f0f0; }
+          h1 { color: #ff6347; text-align: center; }
+          p { color: #333; font-size: 18px; text-align: center; }
+        </style>
+      </head>
+      <body>
+        ${editor.getValue()}
+      </body>
+      </html>
+    `);
+    outputDoc.close();
+
+    // Gagner de l'XP si le code contient <h1> et <p>
+    const code = editor.getValue();
+    if (code.includes("<h1>") && code.includes("<p>") && currentXP === lastXP) {
+      addXP(20);
+    }
+  };
+</script>
+
 </head>
 <body>
 
@@ -92,7 +194,6 @@
   </div>
 
   <div class="editor-container">
-    <!-- L'éditeur de code -->
     <div id="editor">
 /* Exemple de code HTML et CSS pour débutants :
   body {
@@ -114,101 +215,16 @@
     <button onclick="runCode()">Exécuter le Code</button>
   </div>
 
-  <div class="xp-container">
-    <p class="xp">XP Gagnée : <span id="xp">0</span></p>
-    <div id="xp-popup">+20 XP !</div>
-
   <div class="output-container">
     <h3>Voici le rendu :</h3>
     <iframe id="output"></iframe>
   </div>
 
+  <div id="xp-popup">+20 XP !</div>
+
   <footer>
     © 2025 DevQuest - Rejoignez la quête !
   </footer>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
-  <script>
-    // Initialisation de l'éditeur Ace
-    const editor = ace.edit("editor");
-    editor.setTheme("ace/theme/monokai");
-    editor.getSession().setMode("ace/mode/html");  // On change ici pour le mode HTML
-
-    // Exemple par défaut pour les débutants
-    const defaultHTML = `
-      <h1>Hello World!</h1>
-      <p>Félicitations, tu as créé ta première page HTML !</p>
-    `;
-    
-    // On met l'exemple dans l'éditeur par défaut
-    editor.setValue(defaultHTML);
-
-    let currentXP = 0;
-    let lastXP = 0;
-
-    // Fonction pour augmenter les points XP
-    function addXP(amount) {
-      currentXP += amount;
-      document.getElementById('xp').textContent = currentXP;
-      showXPPopup(amount);
-    }
-
-    // Fonction pour afficher le popup XP
-    function showXPPopup(amount) {
-      const popup = document.getElementById('xp-popup');
-      popup.textContent = `+${amount} XP !`;
-      popup.style.display = 'block';
-      setTimeout(() => popup.style.display = 'none', 2000);
-    }
-
-    // Fonction pour exécuter le code HTML écrit dans l'éditeur
-    function runCode() {
-      const outputFrame = document.getElementById('output');
-      const outputDoc = outputFrame.contentDocument || outputFrame.contentWindow.document;
-      
-      // Créer un document HTML basique dans l'iframe
-      outputDoc.open();
-      outputDoc.write(`
-        <!DOCTYPE html>
-        <html lang="fr">
-        <head>
-          <meta charset="UTF-8">
-          <title>Hello World</title>
-          <style>
-            body {
-              background-color: #f0f0f0;
-            }
-
-            h1 {
-              color: #ff6347;
-              text-align: center;
-            }
-
-            p {
-              color: #333;
-              font-size: 18px;
-              text-align: center;
-            }
-          </style>
-        </head>
-        <body>
-          ${editor.getValue()}  <!-- Injecte le code HTML écrit dans l'éditeur -->
-        </body>
-        </html>
-      `);
-      outputDoc.close();
-
-      // Vérifier si des éléments ont été modifiés pour ajouter des XP
-      if (editor.getValue().includes("<h1>") && editor.getValue().includes("<p>")) {
-        // Si le HTML contient un h1 et un p, on donne des XP
-        if (currentXP === lastXP) { // Pour ne pas donner les mêmes points plusieurs fois
-          addXP(20);  // Ajoute 20 XP pour cette action
-        }
-      }
-    }
-  </script>
-
-  <div id="xp-popup">+20 XP !</div>
 
 </body>
 </html>
