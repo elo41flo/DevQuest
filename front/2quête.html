@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Défi: Styliser une page avec CSS</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #facc15;
+      margin-bottom: 20px;
+    }
+
+    .editor-container {
+      width: 80%;
+      margin-top: 40px;
+    }
+
+    #editor {
+      height: 300px;
+      width: 100%;
+      background-color: #1e293b;
+      color: white;
+      font-size: 14px;
+      border: 1px solid #1e293b;
+    }
+
+    .output-container {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #1e293b;
+      border-radius: 8px;
+      width: 100%;
+    }
+
+    iframe {
+      width: 100%;
+      height: 400px;
+    }
+
+    button {
+      border-radius: 5px;
+      background-color: turquoise;
+      border: none;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Défi: Styliser une page avec CSS</h1>
+  <p>Utilise les propriétés CSS pour styliser ta page HTML.</p>
+
+  <div class="editor-container">
+    <!-- L'éditeur de code -->
+    <div id="editor">
+// Exemple de code CSS pour débutants :
+/*
+  body {
+    background-color: #f0f0f0;
+  }
+
+  h1 {
+    color: #ff6347;
+    text-align: center;
+  }
+
+  p {
+    color: #333;
+    font-size: 18px;
+    text-align: center;
+  }
+*/
+    </div>
+    <button onclick="runCode()">Exécuter le Code</button>
+  </div>
+
+  <div class="output-container">
+    <h3>Voici le rendu :</h3>
+    <iframe id="output"></iframe>
+  </div>
+
+  <footer>
+    © 2025 DevQuest - Rejoignez la quête !
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+  <script>
+    // Initialisation de l'éditeur Ace
+    const editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.getSession().setMode("ace/mode/css");  // On change ici pour le mode CSS
+
+    // Exemple par défaut pour les débutants
+    const defaultCSS = `
+      /* Exemple de code CSS */
+      body {
+        background-color: #f0f0f0;
+      }
+
+      h1 {
+        color: #ff6347;
+        text-align: center;
+      }
+
+      p {
+        color: #333;
+        font-size: 18px;
+        text-align: center;
+      }
+    `;
+    
+    // On met l'exemple dans l'éditeur par défaut
+    editor.setValue(defaultCSS);
+
+    // Fonction pour exécuter le code CSS écrit dans l'éditeur
+    function runCode() {
+      const outputFrame = document.getElementById('output');
+      const outputDoc = outputFrame.contentDocument || outputFrame.contentWindow.document;
+      
+      // Créer un document HTML basique dans l'iframe
+      outputDoc.open();
+      outputDoc.write(`
+        <!DOCTYPE html>
+        <html lang="fr">
+        <head>
+          <meta charset="UTF-8">
+          <title>CSS Application</title>
+          <style>
+            ${editor.getValue()}  <!-- Injecte le code CSS écrit dans l'éditeur -->
+          </style>
+        </head>
+        <body>
+          <h1>Bienvenue dans le défi CSS !</h1>
+          <p>Commence à styliser cette page à l'aide de CSS.</p>
+        </body>
+        </html>
+      `);
+      outputDoc.close();
+    }
+  </script>
+
+</body>
+</html>

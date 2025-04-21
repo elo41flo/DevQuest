@@ -98,7 +98,7 @@
 
   <script>
     const quests = [
-      { name: "Créer ta première page HTML", description: "Apprends à créer ta première page web en HTML." },
+      { name: "Créer ta première page HTML", description: "Apprends à créer ta première page web en HTML.",  },
       { name: "Styliser une page avec CSS", description: "Utilise les propriétés CSS pour styliser ta page HTML." },
       { name: "Créer une barre de navigation", description: "Apprends à créer une barre de navigation responsive." },
       { name: "Manipuler le DOM avec JavaScript", description: "Apprends à manipuler les éléments d'une page web avec JavaScript." },
@@ -147,7 +147,7 @@
       card.innerHTML = `
         <h2>📜 ${quest.name}</h2>
         <p>${quest.description}</p>
-        <a href="#" class="btn" onclick="showQuestDetails(${index})">Commencer le défi</a>
+        <a href="${index + 1}quête.html" class="btn">Commencer le défi</a>
       `;
       questsContainer.appendChild(card);
     });

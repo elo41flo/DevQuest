@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Défi : Manipuler le DOM avec JavaScript</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1, h3 {
+      color: #facc15;
+      margin-bottom: 10px;
+    }
+
+    .editor-wrapper {
+      display: flex;
+      gap: 20px;
+      width: 100%;
+      margin-top: 30px;
+      justify-content: center;
+    }
+
+    .editor-box {
+      width: 30%;
+    }
+
+    .editor {
+      height: 200px;
+      border: 1px solid #334155;
+      border-radius: 8px;
+    }
+
+    .missions {
+      margin-top: 20px;
+      background: #1e293b;
+      padding: 15px;
+      border-radius: 8px;
+      width: 90%;
+    }
+
+    .missions ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .missions li {
+      margin: 5px 0;
+    }
+
+    .output-container, iframe {
+      margin-top: 20px;
+      width: 100%;
+      height: 300px;
+      border: none;
+      background: white;
+      border-radius: 8px;
+    }
+
+    .actions {
+      margin-top: 15px;
+    }
+
+    button {
+      background-color: turquoise;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .xp {
+      margin-top: 10px;
+      color: #38bdf8;
+      font-weight: bold;
+    }
+
+    #xp-popup {
+      display: none;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #16a34a;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 6px;
+      font-weight: bold;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Défi : Manipuler le DOM avec JavaScript</h1>
+  <p>Modifie dynamiquement le contenu d'une page en utilisant JavaScript.</p>
+
+  <div class="missions">
+    <h3>🎯 Missions</h3>
+    <ul id="mission-list">
+      <li>☐ Ajouter un bouton dans le HTML</li>
+      <li>☐ Ajouter un élément avec un ID (ex : h1 id="titre")</li>
+      <li>☐ Utiliser document.getElementById dans le JS</li>
+      <li>☐ Changer le texte du h1 au clic</li>
+    </ul>
+  </div>
+
+  <div class="editor-wrapper">
+    <div class="editor-box">
+      <h3>HTML</h3>
+      <div id="html-editor" class="editor"></div>
+    </div>
+    <div class="editor-box">
+      <h3>CSS</h3>
+      <div id="css-editor" class="editor"></div>
+    </div>
+    <div class="editor-box">
+      <h3>JavaScript</h3>
+      <div id="js-editor" class="editor"></div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button onclick="runCode()">Exécuter le Code</button>
+  </div>
+  <div class="xp-container">
+    <p class="xp">XP Gagnée : <span id="xp">0</span></p>
+    <div id="xp-popup">+20 XP !</div>
+
+  <iframe id="output"></iframe>
+  <div id="xp-popup">+20 XP !</div>
+
+  <!-- Ace Editor -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+
+  <!-- Script standard pour éditeur + missions -->
+  <script>
+    const htmlEditor = ace.edit("html-editor");
+    htmlEditor.setTheme("ace/theme/monokai");
+    htmlEditor.getSession().setMode("ace/mode/html");
+
+    const cssEditor = ace.edit("css-editor");
+    cssEditor.setTheme("ace/theme/monokai");
+    cssEditor.getSession().setMode("ace/mode/css");
+
+    const jsEditor = ace.edit("js-editor");
+    jsEditor.setTheme("ace/theme/monokai");
+    jsEditor.getSession().setMode("ace/mode/javascript");
+
+    htmlEditor.setValue(`<h1 id="titre">Bonjour !</h1>\n<button onclick="changerTexte()">Clique moi</button>`);
+    cssEditor.setValue(`body { text-align: center; margin-top: 100px; font-size: 20px; }`);
+    jsEditor.setValue(`function changerTexte() {\n  document.getElementById("titre").innerText = "Tu as cliqué !";\n}`);
+
+    let lastXP = 0;
+
+    function runCode() {
+        // Exécuter le code comme tu le fais déjà
+        const outputFrame = document.getElementById('output');
+        const outputDoc = outputFrame.contentDocument || outputFrame.contentWindow.document;
+      
+        outputDoc.open();
+        outputDoc.write(`
+          <!DOCTYPE html>
+          <html lang="fr">
+          <head>
+            <meta charset="UTF-8">
+            <title>Défi: Barre de navigation</title>
+            <style>
+              ${cssEditor.getValue()}
+            </style>
+          </head>
+          <body>
+            ${htmlEditor.getValue()}
+          </body>
+          </html>
+        `);
+        outputDoc.close();
+      
+        // Lancer la vérification des missions
+checkMissions(htmlEditor.getValue(), jsEditor.getValue());
+        }     
+
+    function showXPPopup(amount) {
+      const popup = document.getElementById('xp-popup');
+      popup.textContent = `+${amount} XP !`;
+      popup.style.display = 'block';
+      setTimeout(() => popup.style.display = 'none', 2000);
+    }
+
+    function checkMissions(html, js) {
+      const missions = [
+        { test: html.includes("<button"), done: false },
+        { test: html.includes("id="), done: false },
+        { test: js.includes("getElementById"), done: false },
+        { test: js.includes("innerText"), done: false }
+      ];
+
+      const listItems = document.querySelectorAll("#mission-list li");
+      let xp = 0;
+
+      missions.forEach((m, i) => {
+        if (m.test) {
+          listItems[i].textContent = listItems[i].textContent.replace("☐", "✅");
+          xp += 20;
+        } else {
+          listItems[i].textContent = listItems[i].textContent.replace("✅", "☐");
+        }
+      });
+
+      document.getElementById("xp").textContent = xp;
+
+      if (xp > lastXP) {
+        const gained = xp - lastXP;
+      
+        const challengeKey = 'xp_awarded_dom_js';
+        const alreadyAwarded = localStorage.getItem(challengeKey);
+      
+        if (!alreadyAwarded && typeof updateXP === 'function') {
+            updateXP(gained);
+            showXPPopup(gained);
+            localStorage.setItem(challengeKey, 'true');
+          } else {
+            return; // Ne pas réafficher ou recalculer l'XP déjà gagné
+          }          
+      
+        lastXP = xp;
+      }
+    }  
+
+    window.runCode = runCode;
+  </script>
+
+  <!-- Script module pour Firebase -->
+  <script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { doc, getDoc, setDoc, getDocs, query, collection, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js';
+    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js';
+
+    let currentUser = null;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        console.log("Connecté en tant que :", user.displayName || user.email);
+        fetchLeaderboard();
+      } else {
+        console.warn("Utilisateur non connecté");
+      }
+    });
+
+    async function updateXP(xpGagne) {
+      if (!currentUser) return;
+
+      const userRef = doc(db, "users", currentUser.uid);
+      const docSnap = await getDoc(userRef);
+
+      let currentXP = 0;
+      if (docSnap.exists()) {
+        currentXP = docSnap.data().xp || 0;
+      }
+
+      const newXP = currentXP + xpGagne;
+
+      await setDoc(userRef, {
+        uid: currentUser.uid,
+        username: currentUser.displayName || currentUser.email || "Anonyme",
+        xp: newXP
+      });
+
+      console.log(`XP mis à jour : ${newXP}`);
+      fetchLeaderboard();
+    }
+
+    async function fetchLeaderboard() {
+      const leaderboardTable = document.getElementById('leaderboard')?.getElementsByTagName('tbody')[0];
+      if (!leaderboardTable) return;
+
+      const snapshot = await getDocs(
+        query(collection(db, "users"), orderBy("xp", "desc"), limit(10))
+      );
+
+      leaderboardTable.innerHTML = '';
+      let rank = 1;
+      snapshot.forEach(doc => {
+        const user = doc.data();
+        const row = leaderboardTable.insertRow();
+        row.innerHTML = `
+          <td>${rank}</td>
+          <td>${user.username}</td>
+          <td>${user.xp || 0}</td>
+        `;
+        rank++;
+      });
+    }
+
+    window.updateXP = updateXP;
+    fetchLeaderboard();
+  </script>
+
+</body>
+</html>
